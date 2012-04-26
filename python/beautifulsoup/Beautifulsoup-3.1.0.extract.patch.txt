@@ -1,0 +1,28 @@
+--- BeautifulSoup.py.orig	2009-01-06 22:10:49.000000000 +0100
++++ BeautifulSoup.py.patched-RM	2010-02-18 04:37:39.000000000 +0100
+@@ -141,13 +141,21 @@
+         self.extract()
+         oldParent.insert(myIndex, replaceWith)
+ 
++    def indexInParent(self):
++        index = 0
++        while index < len(self.parent.contents):
++            if self.parent.contents[index] is self:
++                return index
++            index = index + 1
++        # if this happens, something is really wrong with the data structure:
++        return None
++
+     def extract(self):
+         """Destructively rips this element out of the tree."""
+         if self.parent:
+-            try:
+-                self.parent.contents.remove(self)
+-            except ValueError:
+-                pass
++            index = self.indexInParent()
++            if index != None:
++              del self.parent.contents[index]
+ 
+         #Find the two elements that would be next to each other if
+         #this element (and any children) hadn't been parsed. Connect
